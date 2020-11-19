@@ -1,20 +1,86 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>
-      Blank
+      Partidos
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
-
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
-  </div>
+  <form [formGroup]="formulario" (ngSubmit)="onSubmit(formulario.value)">
+    <div> <!--div seccion 1-->
+      <ion-card>
+        <ion-card-header>
+          <ion-card-subtitle></ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-item>
+            <ion-label position="floating" color="primary">Fecha:</ion-label>
+            <ion-input type="date" formControlName="fechaPartido"></ion-input>
+          </ion-item>
+          <div formGroupName="grupoEquipos">
+            <ion-item>
+              <ion-label position="floating" color="primary">Equipo Local:</ion-label>
+              <ion-select formControlName="equipoLocal" (ionChange)="onChangeEquipoLocal($event)" >
+                <ion-select-option *ngFor="let equipo of equipos" [value]="equipo">
+                      {{equipo.equipo}}
+                </ion-select-option>
+              </ion-select>      
+            </ion-item>
+            <ion-item>
+              <ion-label position="floating" color="primary">Equipo Visitante:</ion-label>
+              <ion-select formControlName="equipoVisitante" (ionChange)="onChangeEquipoVisitante($event)">
+                <ion-select-option *ngFor="let equipo of equipos" [value]="equipo">
+                      {{equipo.equipo}}
+                </ion-select-option>
+              </ion-select>      
+            </ion-item>
+          </div> <!--End div grupoEquipos-->
+        </ion-card-content>
+      </ion-card>
+    </div> <!--End div seccion 1-->
+    <div *ngIf="grupoEquipos.valid"> <!--div seccion 2-->
+      <ion-card-header>
+        <ion-card-subtitle>Resultado</ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-item>
+          <ion-input class="ion-text-end" type="number" formControlName="golesLocal" min=0 text-right></ion-input>
+          <ion-input class="ion-text-end" type="number" formControlName="golesVisitante" min=0></ion-input>
+        </ion-item>
+      </ion-card-content>
+      <ion-card>
+        <ion-card-header>
+          <ion-card-subtitle>Alineación {{equipoLocal}}</ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-item-sliding *ngFor="let jugador of jugadoresLocal; let indice=index">
+            <ion-item>
+                {{jugador}}
+            </ion-item>
+            <ion-item-options>
+                <button ion-button icon-only (click)="deleteJugadorLocal(indice)" danger>
+                    <ion-icon name="trash"></ion-icon>
+                </button>
+            </ion-item-options>
+          </ion-item-sliding>
+        </ion-card-content>
+      </ion-card>
+      <ion-card>
+        <ion-card-header>
+          <ion-card-subtitle>Alineación {{equipoVisitante}}</ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-item *ngFor="let jugador of jugadoresVisitante; let indice=index">
+            {{jugador}}
+            <button ion-button icon-only 
+              (click)="deleteJugadorVisitante(indice)" slot="end">
+                    <ion-icon name="trash"></ion-icon>
+            </button>
+          </ion-item>
+        </ion-card-content>       
+      </ion-card>
+    </div> <!--End div seccion 1-->
+    <ion-button color="primary" class="submit-btn" expand="block" type="submit" [disabled]="!formulario.valid">Aceptar</ion-button>
+  </form>
 </ion-content>
